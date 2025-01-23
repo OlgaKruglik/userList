@@ -1,0 +1,63 @@
+.toolbar {
+    width: 100%;
+}
+.toolbar-header {
+    padding: 10px;
+    margin: 10px;
+    background: #dbdbdb;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.taking-actions {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 1rem;
+}
+.taking-image {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 5px;
+    border: 2px solid blue;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.taking-image img{
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.taking-image p {
+    color: blue;
+    padding: 0 5px;
+}
+.header-image img {
+    padding: 12px;
+}
+
+.toolbar-filter {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.toolbar-filter input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 2px solid rgb(199, 199, 199);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.foolbar-users {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 768px) {
+    .toolbar-header {
+        flex-direction: column;
+        gap: 2rem;
+    }
+  }

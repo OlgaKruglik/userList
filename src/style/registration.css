@@ -1,0 +1,149 @@
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    height: 100vh;
+    display: flex;
+  }
+  
+  .login-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+  }
+  
+  .login-form {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa; 
+    gap: 2rem;
+  }
+  
+  .image-container {
+    width: 50%;
+    background: url('/src/Pages/image/fon.jpg') no-repeat center center;
+    background-size: cover;
+  }
+  
+  .login-card {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    text-align: center;
+  }
+  
+  .login-header {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+  }
+  
+  .form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    text-align: left;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0 5px;
+  }
+
+  .form-check {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-start;
+    border: none;
+  }
+  
+  .form-group label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 0px;
+  }
+  
+  .form-input:focus {
+    border-color: #4e54c8;
+    outline: none;
+  }
+  
+  .btn-submit {
+    background: #4e54c8;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  .btn-submit:hover {
+    background: #292d8f;
+  }
+  
+  .form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .form-footer-register {
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+  }
+
+  .form-footer-password {
+    padding-right: 1rem;
+  }
+  
+  .form-footer a {
+    color: #4e54c8;
+    text-decoration: none;
+  }
+  
+  .form-footer a:hover {
+    text-decoration: underline;
+  } 
+  .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+  }
+  @media (max-width: 900px) {
+    .login-card {
+      width: 50%;
+    }
+  }
+  @media (max-width: 768px) {
+    .login-card {
+      width: 60%;
+    }
+  }
+  @media (max-width: 700px) {
+    .image-container {
+      display: none;
+    }
+  
+    .login-form {
+      width: 100%; 
+    }
+  }
+  
