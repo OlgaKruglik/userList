@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const useFetchUsers = () => {
-const [users, setUsers] = useState([]); // Состояние для хранения данных
-const [loading, setLoading] = useState(false); // Состояние загрузки
-const [error, setError] = useState(null); // Состояние ошибок
+const [users, setUsers] = useState([]);
+const [loading, setLoading] = useState(false); 
+const [error, setError] = useState(null); 
 
 useEffect(() => {
     const fetchUsers = async () => {
@@ -16,8 +16,10 @@ useEffect(() => {
         if (response.headers['content-type'].includes('application/json')) {
           const filteredUsers = response.data.map(user => ({
             id: user.id,
+            name: user.name,
             email: user.email,
             password: user.password,
+            last_login: user.last_login || null,
           }));
           setUsers(filteredUsers);
         } else {
@@ -34,7 +36,6 @@ useEffect(() => {
     fetchUsers();
   }, []);
   
-// Пустой массив зависимостей — запрос будет выполнен один раз при монтировании
 
 return { users, loading, error };
 };

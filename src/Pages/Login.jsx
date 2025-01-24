@@ -7,6 +7,7 @@ function Login() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
@@ -21,11 +22,12 @@ function Login() {
 
     const handleRegister = async (event) => {
         event.preventDefault();
-        if (email && password) {
+        if (email && password && name) {
             try {
-                const response = await axios.post('http://localhost:5000/register', { email, password, rememberMe });
+                const response = await axios.post('http://localhost:5000/register', { name, email, password, rememberMe });
                 console.log('User registered:', response.data);
                 outRezult('Registration successful!');
+                setName('');
                 setEmail('');
                 setPassword('');
             } catch (error) {
@@ -33,7 +35,7 @@ function Login() {
                 setError(error.response?.data || 'An error occurred during registration.');
             }
         } else {
-            outRezult('Please fill in both email and password fields.');
+            outRezult('Please fill in all fields (name, email, and password).');
         }
     };
 
@@ -60,6 +62,16 @@ function Login() {
                 <h2 className="login-header">Login</h2>
                 {error && <p className="error-message">{error}</p>}
                 <form>
+                    <div className="form-group">
+                    <input
+                        type="text"
+                        id="name"
+                        className="form-input"
+                        placeholder="Enter your name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                    </div>
                     <div className="form-group">
                         <input
                             type="email"

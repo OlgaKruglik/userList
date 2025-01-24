@@ -22,7 +22,7 @@
     align-items: center;
     background: white;
     border-radius: 5px;
-    border: 2px solid blue;
+    border: 2px solid rgb(160, 160, 255);;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 .taking-image img{
@@ -31,7 +31,7 @@
 }
 
 .taking-image p {
-    color: blue;
+    color: rgb(160, 160, 255);
     padding: 0 5px;
 }
 .header-image img {
@@ -49,10 +49,61 @@
     border: 2px solid rgb(199, 199, 199);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+.time-out {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    width: 30%;
+    gap: 5px;
+}
+
+.time-out img {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
 
 .foolbar-users {
     display: flex;
     flex-direction: column;
+}
+.list-users {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+}
+
+.info-user {
+    background: #dbdbdb;
+    width: 100%;
+}
+.info-user.blocked {
+    opacity: 0.5;
+}
+
+.table label{
+    padding: 0 10px;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 5px;
+    border: 2px solid rgb(199, 199, 199);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-user label {
+    padding: 0 10px;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 5px;
+    border: 2px solid rgb(199, 199, 199);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-user  p {
+    width: 30%;
+    text-align: left;
 }
 
 @media (max-width: 768px) {

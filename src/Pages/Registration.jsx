@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import useFetchUsers from '../hoock/useUser';
 import eye from './image/eyi.png'
 import imgEmail from './image/imgEmail.webp'
 import '../style/registration.css';
@@ -12,9 +11,8 @@ function Registration() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { users, loading, error: fetchError } = useFetchUsers();
+
   
-  console.log('Fetched users:', users);
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (email && password) {

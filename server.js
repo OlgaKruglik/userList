@@ -10,43 +10,29 @@ const cors = require('cors');
 dotenv.config();
 
 const app = express();
+const router = express.Router();
 const PORT = process.env.PORT || 5000;
 
 // CORS настройки
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:5000', 'http://localhost:5001'];
+
 app.use(cors({
-  origin: 'http://localhost:3000', // Разрешить запросы с вашего фронтенда
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Разрешенные методы
-  credentials: true, // Если нужно передавать куки или заголовки авторизации
+  origin: (origin, callback) => {
+    // Разрешить запросы без заголовка origin (например, от Postman или серверных запросов)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true, // Разрешить передачу cookies/headers
 }));
 
 // Middleware
 app.use(bodyParser.json());
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        "default-src": ["'self'"],
-        "style-src": ["'self'", "https://fonts.googleapis.com", "'unsafe-inline'"],
-        "font-src": ["'self'", "https://fonts.gstatic.com"],
-        "img-src": ["'self'", "data:"],
-      },
-    },
-  })
-);
-
-// Обслуживание статических файлов
-app.use(express.static(path.join(__dirname, 'build')));
-
-// Обслуживание manifest.json
-app.get('/manifest.json', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'manifest.json'));
-});
-
-// Обработка остальных маршрутов
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
+app.use(helmet());
+app.use('/api', router);
 
 // Подключение к базе данных MySQL
 const db = mysql.createConnection({
@@ -56,57 +42,30 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME || 'mydatabase',
 });
 
+// Проверка подключения к базе данных
 db.connect((err) => {
   if (err) {
     console.error('Error connecting to the database:', err.message);
     process.exit(1);
   }
   console.log('Connected to the MySQL database.');
-});
 
-// Маршрут для регистрации
-app.post('/register', async (req, res) => {
-  const { email, password, rememberMe } = req.body;
-  if (!email || !password) {
-    return res.status(400).send('Email and password are required.');
-  }
-
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const query = 'INSERT INTO users (email, password, remember_me) VALUES (?, ?, ?)';
-    db.query(query, [email, hashedPassword, rememberMe], (err) => {
-      if (err) {
-        console.error('Database error during registration:', err); // Логирование
-        if (err.code === 'ER_DUP_ENTRY') {
-          return res.status(409).send('User already exists.');
-        }
-        return res.status(500).send('Error inserting user.');
-      }
-      res.status(201).send('User registered successfully.');
-    });
-  } catch (error) {
-    console.error('Server error during registration:', error); // Логирование
-    res.status(500).send('Server error.');
-  }
-});
-
-
-// Маршрут для входа
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).send('Email and password are required.');
-  const query = 'SELECT * FROM users WHERE email = ?';
-  db.query(query, [email], async (err, results) => {
-    if (err || results.length === 0) return res.status(401).send('Invalid email or password.');
-    const user = results[0];
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).send('Invalid email or password.');
-    res.status(200).send('Login successful.');
+  // Запуск сервера
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
   });
 });
-// Маршрут для получения пользователей
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5001');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
+// Маршруты
 app.get('/users', (req, res) => {
-  const sql = 'SELECT id, email, password FROM your_actual_database_name'; // Замените "users" на название вашей таблицы
+  const sql = 'SELECT id, name, email, password, last_login FROM users';
   db.query(sql, (err, results) => {
     if (err) {
       console.error('Error fetching users:', err);
@@ -117,33 +76,158 @@ app.get('/users', (req, res) => {
   });
 });
 
-app.post('/check-user', (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    return res.status(400).send('Email is required.');
+app.post('/register', async (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json('All fields are required (name, email, and password).');
   }
 
-  const query = 'SELECT COUNT(*) AS count FROM users WHERE email = ?';
-  db.query(query, [email], (err, results) => {
-    if (err) {
-      console.error('Database error during user check:', err);
-      return res.status(500).send('Server error.');
+  try {
+    // Хэширование пароля
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // SQL-запрос для добавления нового пользователя
+    const sql = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
+    db.query(sql, [name, email, hashedPassword], (err, result) => {
+      if (err) {
+        console.error('Error saving user:', err);
+        return res.status(500).json('Error registering user');
+      }
+      res.status(201).json('User registered successfully');
+    });
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json('An error occurred during registration');
+  }
+});
+
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json('Email and password are required.');
+  }
+
+  try {
+    const sql = 'SELECT * FROM users WHERE email = ?';
+    db.query(sql, [email], async (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json('Error during login.');
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json('User not found.');
+      }
+
+      const user = results[0];
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      if (!isPasswordValid) {
+        return res.status(401).json('Invalid email or password.');
+      }
+
+      // Обновить время последнего входа
+      const updateLoginTime = 'UPDATE users SET last_login = NOW() WHERE id = ?';
+      db.query(updateLoginTime, [user.id], (updateErr) => {
+        if (updateErr) {
+          console.error('Error updating last login time:', updateErr);
+          return res.status(500).json('Error during login.');
+        }
+
+        res.status(200).json({ message: 'Login successful.', name: user.name, lastLogin: new Date() });
+      });
+    });
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json('An error occurred during login.');
+  }
+});
+
+
+
+app.post('/check-user', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json('Email and password are required.');
+  }
+
+  try {
+    // Проверяем, существует ли пользователь в базе данных
+    const sql = 'SELECT * FROM users WHERE email = ?';
+    db.query(sql, [email], async (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json('Error checking user.');
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json('User not found.');
+      }
+
+      const user = results[0];
+
+      // Проверяем, соответствует ли пароль
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json('Invalid email or password.');
+      }
+
+      res.status(200).json({ message: 'User exists and password is valid.' });
+    });
+  } catch (error) {
+    console.error('Error checking user:', error);
+    res.status(500).json('An error occurred while checking the user.');
+  }
+});
+
+app.post('/register', async (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json('All fields are required (name, email, and password).');
+  }
+
+  try {
+    // Проверка на существование email
+    const [existingUsers] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
+    if (existingUsers.length > 0) {
+      return res.status(400).json('User with this email already exists.');
     }
-    const userExists = results[0].count > 0;
-    res.status(200).json({ exists: userExists });
-  });
-});
 
-db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to the database:', err.message);
-    process.exit(1);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const sql = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
+    await db.query(sql, [name, email, hashedPassword]);
+    res.status(201).json('User registered successfully');
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json('An error occurred during registration');
   }
-  console.log('Connected to the MySQL database.');
+});
+
+router.post('/users/block', async (req, res) => {
+  const { userIds, isBlocked } = req.body;
+
+  if (!Array.isArray(userIds)) {
+      return res.status(400).json({ error: 'Invalid input data' });
+  }
+
+  try {
+      // Ваша логика обновления базы данных
+      await db.query(
+          'UPDATE users SET is_blocked = ? WHERE id IN (?)',
+          [isBlocked, userIds]
+      );
+      res.status(200).json({ message: 'Users updated successfully' });
+  } catch (error) {
+      console.error('Error updating users:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 
-// Запуск сервера
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// module.exports = router;
+
+
