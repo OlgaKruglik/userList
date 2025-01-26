@@ -13,10 +13,16 @@ export default function Toolbar() {
     const [sortOrder, setSortOrder] = useState('asc');
     const [blockedUsers, setBlockedUsers] = useState(new Set());
     const [selectedUsers, setSelectedUsers] = useState(new Set());
+    const [blockedUsersList, setBlockedUsersList] = useState([]);
 
     const handleSort = () => {
         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     };
+
+    useEffect(() => {
+        const blockedList = users.filter((user) => blockedUsers.has(user.id));
+        setBlockedUsersList(blockedList);
+    }, [blockedUsers, users]);
 
     useEffect(() => {
         if (users) {
@@ -33,12 +39,12 @@ export default function Toolbar() {
 
     const handleDeleteUser = async (userId) => {
         try {
-            const response = await fetch(`/api/users/${userId}`, {
+            const response = await fetch(`http://localhost:3033/api/users/${userId}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
                 console.log(`User with ID ${userId} deleted successfully.`);
-                refetchUsers();
+                window.location.reload();
             } else {
                 console.error('Failed to delete user.');
             }
@@ -50,7 +56,7 @@ export default function Toolbar() {
     const handleBlockSelected = async () => {
         try {
             const userIds = Array.from(selectedUsers);
-            const response = await fetch('/api/users/block', {
+            const response = await fetch('http://localhost:3033/api/users/block', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +81,7 @@ export default function Toolbar() {
     const handleUnblockSelected = async () => {
         try {
             const userIds = Array.from(selectedUsers);
-            const response = await fetch('/api/users/block', {
+            const response = await fetch('http://localhost:3033/api/users/block', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -181,12 +187,14 @@ export default function Toolbar() {
                                     checked={selectedUsers.has(user.id)}
                                     onChange={() => handleSelectUser(user.id)}
                                 />
-                                <p>{user.name}</p>
+                                <p>{user.name === 'Default Name'
+                                ? ''
+                                : user.name}</p>
                                 <p>{user.email}</p>
                                 <p>
                                     {user.last_login
                                         ? new Date(user.last_login).toLocaleString()
-                                        : 'Never'}
+                                        : '0'}
                                 </p>
                             </label>
                         </div>

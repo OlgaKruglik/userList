@@ -1,96 +1,119 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import eye from './image/eyi.png'
-import imgEmail from './image/imgEmail.webp'
-import '../style/registration.css';
+import '../style/login.css';
 
 function Registration() {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (email && password) {
-        try {
-            const response = await axios.post('http://localhost:5000/check-user', { email, password, rememberMe  });
-            console.log('User check-user in:', response.data);
-            navigate('/toolbar');
-        } catch (error) {
-            console.error('Error check-user in:', error);
-            setError(error.response?.data || 'An error occurred during check-user.');
-        }
-    } else {
-        alert('Please fill in both email and password fields.');
-    }
+
+  const outRezult = (str) => {
+      setMessage(str);
+      setTimeout(() => {
+          setMessage('');
+      }, 1000);
   };
 
-  const togglePassword = () => {
-    const passwordInput = document.getElementById('password');
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
+  const handleRegister = async (event) => {
+      event.preventDefault();
+      if (email && password && name) {
+          try {
+              const response = await axios.post('http://localhost:3033/register', { name, email, password, rememberMe });
+              console.log('User registered:', response.data.message);
+              outRezult('Registration successful!');
+              setName('');
+              setEmail('');
+              setPassword('');
+          } catch (error) {
+              console.error('Error registering user:', error);
+              setError(error.response?.data || 'An error occurred during registration.');
+          }
+      } else {
+          outRezult('Please fill in all fields (name, email, and password).');
+      }
   };
+
+  const handleLogin = async (event) => {
+      event.preventDefault();
+      if (email && password) {
+        console.log('hi');
+        try {
+            console.log('Sending login request...');
+            const response = await axios.post('http://localhost:3033/login', { email, password });
+            console.log('hi2');
+            console.log('User logged in:', response.data);
+            if (response.status === 200) { 
+            console.log('Navigating to /toolbar');
+            navigate('/toolbar');
+            } else {
+                console.log('Unexpected response status:', response.status);
+            }
+        } catch (error) {
+            console.error('Error logging in:', error);
+            setError(error.response?.data || 'An error occurred during login.');
+        }
+        } else {
+            outRezult('Please fill in both email and password fields.');
+        }
+      };
+
 
   return (
-   <div className="login-container">
-      <div className="login-form">
-        <div className="login-card">
-          <h2 className="login-header">Welcome Back!</h2>
-          {error && <p className="error-message">{error}</p>}
-          <form onSubmit={handleSubmit}>
+    <div className="login">
+    {message && <div className="text-rezult"><p>{message}</p></div>}
+    <div className="login-card-page">
+        <h2 className="login-header">Login</h2>
+        {error && <p className="error-message">{error}</p>}
+        <form>
             <div className="form-group">
-              <input
-                type="email"
-                id="email"
+            <input
+                type="text"
+                id="name"
                 className="form-input"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)
-                }
-              />
-              <img src={imgEmail} alt="Email Icon" className="icon" />
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+            />
             </div>
             <div className="form-group">
-              <input
-                type="password"
-                id="password"
-                className="form-input"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <img src={eye} alt="Toggle Password Visibility" className="icon" onClick={togglePassword} />
+                <input
+                    type="email"
+                    id="email"
+                    className="form-input"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
             </div>
-            <div className="form-group form-check">
-              <input
-                type="checkbox"
-                id="rememberMe"
-                className="form-check-input"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
-              <label htmlFor="rememberMe" className="form-check-label">Remember Me</label>
+            <div className="form-group">
+                <input
+                    type="password"
+                    id="password"
+                    className="form-input"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
             </div>
-            <button type="submit" className="btn-submit">Register</button>
-          </form>
-        </div>
-        <div className="form-footer">
-          <div className="form-footer-register">
-            <p>Already have an account?</p>
-            <a href="/login">Register</a>
-          </div>
-          <div className="form-footer-register">
-            <a href="/forGot">Forgot password</a>
-          </div>
-        </div>
-      </div>
-      <div className="image-container"></div>
+            <div className="btnLogin">
+                <button onClick={handleLogin} className="btn-submit">
+                    Sign in
+                </button>
+                <button onClick={handleRegister} className="btn-submit right">
+                    Registration
+                </button>
+            </div>
+        </form>
     </div>
-  );
+</div>
+);
 }
 
 export default Registration;

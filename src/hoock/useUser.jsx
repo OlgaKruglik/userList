@@ -10,7 +10,7 @@ useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:5000/users');
+        const response = await axios.get('http://localhost:3033/users');
         console.log('API Response:', response.data);
         
         if (response.headers['content-type'].includes('application/json')) {
@@ -20,6 +20,7 @@ useEffect(() => {
             email: user.email,
             password: user.password,
             last_login: user.last_login || null,
+            is_blocked: user.is_blocked
           }));
           setUsers(filteredUsers);
         } else {

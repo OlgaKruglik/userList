@@ -11,9 +11,9 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/userList" element={<UserList />} />
-        <Route path="/" element={<Registration />} />
+        <Route path="/registration" element={<Registration />} />
         <Route path="/toolbar" element={<Toolbar />} />
-        <Route path="/login" element={<Login />} /> 
+        <Route path="/" element={<Login />} /> 
         <Route path="/forGot" element={<ForGotPassword />} />
       </Routes>
     </div>

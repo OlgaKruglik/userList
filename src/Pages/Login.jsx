@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../style/login.css';
+import eye from './image/eyi.png'
+import imgEmail from './image/imgEmail.webp';
+import useFetchUsers from '../hoock/useUser';
+import '../style/registration.css';
 
 function Login() {
 
@@ -11,6 +14,7 @@ function Login() {
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const {users, loading, fetchError} = useFetchUsers();
     const navigate = useNavigate();
 
     const outRezult = (str) => {
@@ -19,35 +23,64 @@ function Login() {
             setMessage('');
         }, 1000);
     };
-
-    const handleRegister = async (event) => {
+  
+    
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        if (email && password && name) {
-            try {
-                const response = await axios.post('http://localhost:5000/register', { name, email, password, rememberMe });
-                console.log('User registered:', response.data);
-                outRezult('Registration successful!');
-                setName('');
-                setEmail('');
-                setPassword('');
-            } catch (error) {
-                console.error('Error registering user:', error);
-                setError(error.response?.data || 'An error occurred during registration.');
+      
+        if (email && password) {
+          try {
+            console.log('Sending check-user request...');
+            const response = await axios.post('http://localhost:3033/check-user', { email, password, rememberMe });
+      
+            console.log('Response from server:', response.data);
+            console.log('Fetched Users:', users);
+      
+            // Проверяем блокировку пользователя на основе email
+            const foundUser = users.find(user => user.email === email);
+            if (foundUser) {
+              if (foundUser.is_blocked === 1) {
+                outRezult('Your account is blocked. Redirecting to registration page.');
+                navigate('/registration'); // Перенаправление на страницу регистрации
+                return;
+              }
+              outRezult('Login successful! Redirecting...');
+              navigate('/toolbar'); // Перенаправление на главную страницу
+            } else {
+              outRezult('User not found.');
             }
+          } catch (error) {
+            console.error('Error checking user:', error);
+            setError(error.response?.data || 'An error occurred during check-user.');
+          }
         } else {
-            outRezult('Please fill in all fields (name, email, and password).');
+          alert('Please fill in both email and password fields.');
         }
+      };
+      
+  
+    const togglePassword = () => {
+      const passwordInput = document.getElementById('password');
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
     };
+
 
     const handleLogin = async (event) => {
         event.preventDefault();
         if (email && password) {
             try {
-                const response = await axios.post('http://localhost:5000/login', { email, password });
+                console.log('Sending login request...');
+                const response = await axios.post('http://localhost:3033/login', { email, password });
                 console.log('User logged in:', response.data);
+                if (response.status === 200) { 
+                console.log('Navigating to /toolbar');
                 navigate('/toolbar');
+                } else {
+                    console.log('Unexpected response status:', response.status);
+                }
             } catch (error) {
-                console.error('Error loging in:', error);
+                console.error('Error logging in:', error);
                 setError(error.response?.data || 'An error occurred during login.');
             }
         } else {
@@ -56,53 +89,60 @@ function Login() {
     };
 
     return (
-        <div className="login">
-            {message && <div className="text-rezult"><p>{message}</p></div>}
-            <div className="login-card-page">
-                <h2 className="login-header">Login</h2>
-                {error && <p className="error-message">{error}</p>}
-                <form>
-                    <div className="form-group">
-                    <input
-                        type="text"
-                        id="name"
-                        className="form-input"
-                        placeholder="Enter your name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    </div>
-                    <div className="form-group">
-                        <input
-                            type="email"
-                            id="email"
-                            className="form-input"
-                            placeholder="Enter your email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <input
-                            type="password"
-                            id="password"
-                            className="form-input"
-                            placeholder="Enter your password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </div>
-                    <div className="btnLogin">
-                        <button onClick={handleLogin} className="btn-submit">
-                            Sign in
-                        </button>
-                        <button onClick={handleRegister} className="btn-submit right">
-                            Registration
-                        </button>
-                    </div>
-                </form>
+        <div className="login-container">
+        <div className="login-form">
+          <div className="login-card">
+            <h2 className="login-header">Welcome Back!</h2>
+            {error && <p className="error-message">{error}</p>}
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <input
+                  type="email"
+                  id="email"
+                  className="form-input"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)
+                  }
+                />
+                <img src={imgEmail} alt="Email Icon" className="icon" />
+              </div>
+              <div className="form-group">
+                <input
+                  type="password"
+                  id="password"
+                  className="form-input"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <img src={eye} alt="Toggle Password Visibility" className="icon" onClick={togglePassword} />
+              </div>
+              <div className="form-group form-check">
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  className="form-check-input"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
+                <label htmlFor="rememberMe" className="form-check-label">Remember Me</label>
+              </div>
+              <button type="submit" className="btn-submit">Register</button>
+            </form>
+          </div>
+          <div className="form-footer">
+            <div className="form-footer-register">
+              <p>Already have an account?</p>
+              <a href="/registration">Register</a>
             </div>
+            <div className="form-footer-register">
+              <a href="/registration">Forgot password</a>
+            </div>
+          </div>
         </div>
+        <div className="image-container"></div>
+      </div>
     );
 }
 
