@@ -150,61 +150,60 @@ res.status(500).json('An error occurred during registration');
 });
 
 app.post('/login', async (req, res) => {
-console.log('Login request received');
-const { email, password } = req.body;
+  console.log('Login request received');
+  const { email, password } = req.body;
 
-if (!email || !password) {
-console.log('Missing email or password');
-return res.status(400).json('Email and password are required.');
-}
+  if (!email || !password) {
+    console.log('Missing email or password');
+    return res.status(400).json('Email and password are required.');
+  }
 
-try {
-const sql = 'SELECT * FROM users WHERE email = ?';
-const [results] = await db.query(sql, [email]);
+  try {
+    const sql = 'SELECT * FROM users WHERE email = ?';
+    const [results] = await db.query(sql, [email]);
 
-if (results.length === 0) {
-console.log('User not found');
-return res.status(404).json('User not found.');
-}
+    if (results.length === 0) {
+      console.log('User not found');
+      return res.status(404).json('User not found.');
+    }
 
-const user = results[0];
-const isPasswordValid = await bcrypt.compare(password, user.password);
+      const user = results[0];
+      const isPasswordValid = await bcrypt.compare(password, user.password);
 
-if (!isPasswordValid) {
-console.log('Invalid email or password');
-return res.status(401).json('Invalid email or password.');
-}
+    if (!isPasswordValid) {
+      console.log('Invalid email or password');
+      return res.status(401).json('Invalid email or password.');
+    }
 
-// Обновить время последнего входа
-const updateLoginTime = 'UPDATE users SET last_login = NOW() WHERE id = ?';
-await db.query(updateLoginTime, [user.id]);
+    const updateLoginTime = 'UPDATE users SET last_login = NOW() WHERE id = ?';
+    await db.query(updateLoginTime, [user.id]);
 
-console.log('Login successful');
-res.status(200).json({ message: 'Login successful.', name: user.name, lastLogin: new Date() });
-} catch (error) {
-console.error('Error during login:', error);
-res.status(500).json('An error occurred during login.');
-}
+    console.log('Login successful');
+    res.status(200).json({ message: 'Login successful.', name: user.name, lastLogin: new Date() });
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json('An error occurred during login.');
+  }
 });
 
 router.post('/users/block', async (req, res) => {
   console.log("/users/block'");
-const { userIds, isBlocked } = req.body;
+  const { userIds, isBlocked } = req.body;
 
-if (!Array.isArray(userIds)) {
-return res.status(400).json({ error: 'Invalid input data' });
-}
+  if (!Array.isArray(userIds)) {
+    return res.status(400).json({ error: 'Invalid input data' });
+  }
 
-try {
-await db.query(
-'UPDATE users SET is_blocked = ? WHERE id IN (?)',
-[isBlocked, userIds]
-);
-res.status(200).json({ message: 'Users updated successfully' });
-} catch (error) {
-console.error('Error updating users:', error);
-res.status(500).json({ error: 'Internal server error' });
-}
+  try {
+    await db.query(
+      'UPDATE users SET is_blocked = ? WHERE id IN (?)',
+      [isBlocked, userIds]
+    );
+    res.status(200).json({ message: 'Users updated successfully' });
+  } catch (error) {
+    console.error('Error updating users:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 router.delete('/users/:id', async (req, res) => {
@@ -219,3 +218,5 @@ router.delete('/users/:id', async (req, res) => {
     res.status(500).json({ error: 'Error deleting user.' });
   }
 });
+
+

@@ -3,7 +3,8 @@ import axios from 'axios';
 
 const useFetchUsers = () => {
 const [users, setUsers] = useState([]);
-const [loading, setLoading] = useState(false); 
+const [loading, setLoading] = useState(false);
+
 const [error, setError] = useState(null); 
 
 useEffect(() => {

@@ -5,7 +5,7 @@ import axios from 'axios';
 import App from './App';
 import './App.css';
 
-axios.defaults.baseURL = 'http://localhost:5000'; 
+axios.defaults.baseURL = 'http://localhost:3033'; 
 axios.defaults.withCredentials = true;
 
 const root = createRoot(document.getElementById('root'));
