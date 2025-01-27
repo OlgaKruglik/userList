@@ -1,10 +1,15 @@
-import React from 'react';
-import '../style/login.css'
+import React, { useEffect } from 'react';
+import '../style/login.css';
+import { useNavigate } from 'react-router-dom';
 
 function UserList() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        navigate('/');
+        }, [navigate]);
     return (
         <div>
-            <hi></hi>
         </div>
     )
 }
