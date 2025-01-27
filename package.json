@@ -24,7 +24,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "PORT=3033 node server.js",
-    "start": "concurrently \"npm run server\" \"npm run client\""
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build"
   },
   "proxy": "http://localhost:3033",
   "eslintConfig": {
