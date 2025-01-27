@@ -20,24 +20,25 @@ const allowedOrigins = [
 'http://localhost:3001',
 'http://localhost:3034',
 'ec2-13-60-190-4.eu-north-1.compute.amazonaws.com',
-"https://olgakruglik.github.io/userList/" // Обновлённый порт
+"https://olgakruglik.github.io", // Обновлённый порт
 ];
 
 // Middleware
 console.log("Middleware");
 app.use(cors({
-origin: (origin, callback) => {
-  console.log('Origin:', origin);
-if (!origin || allowedOrigins.includes(origin)) {
-callback(null, true);
-} else {
-callback(new Error('Not allowed by CORS'));
-}
-},
-methods: ['GET', 'POST', 'PUT', 'DELETE'],
-credentials: true,
-allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: (origin, callback) => {
+    console.log('Origin:', origin);
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
 app.use(bodyParser.json());
 app.use('/api', router);
 app.use(
@@ -70,14 +71,14 @@ console.log("Подключение к базе данных MySQL");
 // Настройка CORS заголовков
 console.log("Настройка CORS заголовков");
 app.use((req, res, next) => {
-const origin = req.headers.origin;
-if (allowedOrigins.includes(origin)) {
-res.header('Access-Control-Allow-Origin', origin);
-}
-res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-res.header('Access-Control-Allow-Credentials', 'true');
-next();
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
 });
 
 // Запуск сервера
