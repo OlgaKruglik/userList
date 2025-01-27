@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import '../style/login.css'
 
 function UserList() {
     return (
