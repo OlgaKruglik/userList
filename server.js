@@ -18,7 +18,8 @@ const allowedOrigins = [
 'http://localhost:3000', 
 'http://localhost:5001',
 'http://localhost:3001',
-'http://localhost:3034', // Обновлённый порт
+'http://localhost:3034',
+'ec2-13-60-190-4.eu-north-1.compute.amazonaws.com', // Обновлённый порт
 ];
 
 // Middleware
