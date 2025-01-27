@@ -2,7 +2,7 @@
   "name": "userlist",
   "version": "0.1.0",
   "private": true,
-  "homepage": "",
+  "homepage": "https://olgakruglik.github.io/userList/",
   "dependencies": {
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
