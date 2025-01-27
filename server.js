@@ -19,7 +19,8 @@ const allowedOrigins = [
 'http://localhost:5001',
 'http://localhost:3001',
 'http://localhost:3034',
-'ec2-13-60-190-4.eu-north-1.compute.amazonaws.com', // Обновлённый порт
+'ec2-13-60-190-4.eu-north-1.compute.amazonaws.com',
+"https://olgakruglik.github.io/userList/" // Обновлённый порт
 ];
 
 // Middleware
