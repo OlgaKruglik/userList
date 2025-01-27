@@ -12,9 +12,8 @@ function App() {
         <Route path="/userList" element={<UserList />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/toolbar" element={<Toolbar />} />
-        <Route path="/" element={<Login />} /> 
+        <Route path="/" element={<Login />} />
       </Routes>
-      <p>Hi</p>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import eye from './image/eyi.png'
 import imgEmail from './image/imgEmail.webp';
 import useFetchUsers from '../hoock/useUser';
@@ -134,10 +135,10 @@ function Login() {
           <div className="form-footer">
             <div className="form-footer-register">
               <p>Already have an account?</p>
-              <a href="/registration">Register</a>
+              <Link to="/registration">Register</Link>
             </div>
             <div className="form-footer-register">
-              <a href="/registration">Forgot password</a>
+            <Link to="/registration">Register</Link>
             </div>
           </div>
         </div>

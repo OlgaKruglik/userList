@@ -1,10 +1,12 @@
 const express = require('express');
-const mysql = require('mysql2/promise'); // Используем промисы
+const mysql = require('mysql2/promise'); 
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
 
 dotenv.config();
 
@@ -39,6 +41,10 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+// Путь к вашему сертификату
+const caCertPath = path.resolve(__dirname, 'ca.pem');
+
+
 app.use(bodyParser.json());
 app.use('/api', router);
 app.use(
@@ -60,10 +66,14 @@ app.use(helmet({ contentSecurityPolicy: false }));
 // Подключение к базе данных MySQL
 console.log("createConnection к базе данных MySQL");
 const db = mysql.createPool({
-host: process.env.DB_HOST || 'localhost',
-user: process.env.DB_USER || 'your_db_user',
-password: process.env.DB_PASSWORD || 'your_db_password',
-database: process.env.DB_NAME || 'mydatabase',
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'your_db_user',
+  password: process.env.DB_PASSWORD || 'your_db_password',
+  database: process.env.DB_NAME || 'mydatabase',
+  port: process.env.DB_PORT || 3306,
+  ssl: process.env.DB_SSL === 'true' ? {
+    ca: fs.readFileSync(caCertPath, 'utf8'),
+  } : null,
 });
 
 console.log("Подключение к базе данных MySQL");
@@ -85,6 +95,10 @@ app.use((req, res, next) => {
 console.log("Запуск сервера");
 app.listen(PORT, () => {
 console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 // Маршруты
