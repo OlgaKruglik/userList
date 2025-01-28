@@ -18,8 +18,6 @@
     "react-scripts": "^5.0.1"
   },
   "scripts": {
-    // "client": "PORT=3001 react-scripts start",
-    // "server": "PORT=3033 node server.js",
     "start-server": "node server.js",
     "predeploy": "yarn build",
     "deploy": "gh-pages -d build"
