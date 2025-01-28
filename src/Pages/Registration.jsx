@@ -12,7 +12,7 @@ function Registration() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://olgakruglik.github.io/userList/';
+  const API_BASE_URL = "https://userslist-5pm7t0b1k-olgakrugliks-projects.vercel.app"
 
 
   const outRezult = (str) => {
