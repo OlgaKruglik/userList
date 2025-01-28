@@ -5,7 +5,8 @@ import unblok from './image/unblok.png'
 import deleteUser from './image/delete.png'
 import useFetchUsers from '../hoock/useUser';
 import useFilterUsers from '../hoock/useFilter';
-import  arrow  from './image/round.png'
+import  arrow  from './image/round.png';
+import { Link } from 'react-router-dom';
 
 export default function Toolbar() {
     const { users, loading, error: fetchError, refetchUsers } = useFetchUsers();
@@ -145,7 +146,7 @@ export default function Toolbar() {
                     <img src={deleteUser} alt='deleteUser' />
                 </div>
                 <div className='taking-image' onClick={handleBlockSelected}>
-                    <a href="/userList">Exit</a>
+                    <Link to="/">Exit</Link>
                 </div>
             </div>
             <div className='toolbar-filter'>
