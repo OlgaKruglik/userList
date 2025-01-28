@@ -145,7 +145,7 @@ export default function Toolbar() {
                     <img src={deleteUser} alt='deleteUser' />
                 </div>
                 <div className='taking-image' onClick={handleBlockSelected}>
-                    <a href="/">Exit</a>
+                    <a href="/userList">Exit</a>
                 </div>
             </div>
             <div className='toolbar-filter'>
