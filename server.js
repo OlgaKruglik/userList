@@ -87,6 +87,12 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(cors({
+  origin: 'https://olgakruglik.github.io', // Frontend's origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
+  credentials: true, // Include credentials if necessary (e.g., cookies)
+}));
+
 
 
 router.get('/users', async (req, res) => {
