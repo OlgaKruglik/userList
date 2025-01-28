@@ -108,7 +108,7 @@ function Registration() {
                     Sign in
                 </button>
                 <button onClick={handleRegister} className="btn-submit right">
-                    Registration!
+                    Registration
                 </button>
             </div>
         </form>
