@@ -12,6 +12,7 @@ function Registration() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3033';
 
 
   const outRezult = (str) => {
@@ -25,7 +26,7 @@ function Registration() {
       event.preventDefault();
       if (email && password && name) {
           try {
-              const response = await axios.post('http://localhost:3033/register', { name, email, password, rememberMe });
+              const response = await axios.post(`${API_BASE_URL}/register`, { name, email, password, rememberMe });
               console.log('User registered:', response.data.message);
               outRezult('Registration successful!');
               setName('');
@@ -46,7 +47,7 @@ function Registration() {
         console.log('hi');
         try {
             console.log('Sending login request...');
-            const response = await axios.post('http://localhost:3033/login', { email, password });
+            const response = await axios.post(`${API_BASE_URL}/login`, { email, password });
             console.log('hi2');
             console.log('User logged in:', response.data);
             if (response.status === 200) { 

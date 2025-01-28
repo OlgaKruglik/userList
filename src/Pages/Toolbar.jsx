@@ -5,6 +5,7 @@ import unblok from './image/unblok.png'
 import deleteUser from './image/delete.png'
 import useFetchUsers from '../hoock/useUser';
 import useFilterUsers from '../hoock/useFilter';
+import axios from 'axios';
 import  arrow  from './image/round.png';
 import { Link } from 'react-router-dom';
 
@@ -15,6 +16,7 @@ export default function Toolbar() {
     const [blockedUsers, setBlockedUsers] = useState(new Set());
     const [selectedUsers, setSelectedUsers] = useState(new Set());
     const [blockedUsersList, setBlockedUsersList] = useState([]);
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3033';
 
     const handleSort = () => {
         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -40,7 +42,7 @@ export default function Toolbar() {
 
     const handleDeleteUser = async (userId) => {
         try {
-            const response = await fetch(`http://localhost:3033/api/users/${userId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
@@ -57,7 +59,7 @@ export default function Toolbar() {
     const handleBlockSelected = async () => {
         try {
             const userIds = Array.from(selectedUsers);
-            const response = await fetch('http://localhost:3033/api/users/block', {
+            const response = await fetch(`${API_BASE_URL}/api/users/block`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,7 +84,7 @@ export default function Toolbar() {
     const handleUnblockSelected = async () => {
         try {
             const userIds = Array.from(selectedUsers);
-            const response = await fetch('http://localhost:3033/api/users/block', {
+            const response = await fetch(`${API_BASE_URL}/api/users/block`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

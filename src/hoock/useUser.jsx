@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3033';
+
 const useFetchUsers = () => {
 const [users, setUsers] = useState([]);
 const [loading, setLoading] = useState(false);
@@ -11,7 +13,7 @@ useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:3033/users');
+        const response = await axios.get(`${API_BASE_URL}/users`);
         console.log('API Response:', response.data);
         
         if (response.headers['content-type'].includes('application/json')) {

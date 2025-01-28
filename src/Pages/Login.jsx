@@ -17,6 +17,7 @@ function Login() {
     const [message, setMessage] = useState('');
     const {users, loading, fetchError} = useFetchUsers();
     const navigate = useNavigate();
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3033';
 
     const outRezult = (str) => {
         setMessage(str);
@@ -32,7 +33,7 @@ function Login() {
         if (email && password) {
           try {
             console.log('Sending check-user request...');
-            const response = await axios.post('http://localhost:3033/check-user', { email, password, rememberMe });
+            const response = await axios.post(`${API_BASE_URL}/check-user`, { email, password, rememberMe });
       
             console.log('Response from server:', response.data);
             console.log('Fetched Users:', users);
