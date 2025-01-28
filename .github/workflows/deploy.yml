@@ -36,6 +36,7 @@ jobs:
         DB_PORT: ${{ secrets.DB_PORT }}
         DB_SSL: ${{ secrets.DB_SSL }}
         REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
+        CLIENT_ORIGIN: "https://userslist-5pm7t0b1k-olgakrugliks-projects.vercel.app"
       run: |
         echo "Starting application..."
         npm start
