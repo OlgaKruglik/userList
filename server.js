@@ -12,7 +12,7 @@ dotenv.config();
 
 const app = express();
 const router = express.Router();
-const PORT = process.env.PORT || 3033; 
+app.use(express.static(path.join(__dirname, 'build'))); 
 
 console.log("CORS настройки");
 const allowedOrigins = [
@@ -22,10 +22,11 @@ const allowedOrigins = [
 'http://localhost:3034',
 'ec2-13-60-190-4.eu-north-1.compute.amazonaws.com',
 "https://olgakruglik.github.io",
-"https://user-list-bm8o.vercel.app/"
+"https://user-list-bm8o.vercel.app/",
+"https://userslist-5pm7t0b1k-olgakrugliks-projects.vercel.app"
 ];
 
-
+module.exports = app;
 app.use(cors({
   origin: (origin, callback) => {
     console.log('Origin:', origin);
@@ -44,7 +45,6 @@ const caCertPath = path.resolve(__dirname, 'ca.pem');
 
 
 app.use(bodyParser.json());
-app.use('/api', router);
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -53,7 +53,11 @@ app.use(
         fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "data:"],
         scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'", 
+          "https://fonts.googleapis.com",
+        ],
       },
     },
   })
@@ -83,12 +87,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.listen(PORT, () => {
-console.log(`Server is running on http://localhost:${PORT}`);
-});
 
 
-app.get('/users', async (req, res) => {
+router.get('/users', async (req, res) => {
   const sql = 'SELECT id, name, email, password, last_login, is_blocked FROM users';
   try {
     const [results] = await db.query(sql);
@@ -99,7 +100,7 @@ app.get('/users', async (req, res) => {
   }
 });
 
-app.post('/check-user', async (req, res) => {
+router.post('/check-user', async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -128,7 +129,7 @@ app.post('/check-user', async (req, res) => {
   }
 });
 
-app.post('/register', async (req, res) => {
+router.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -151,7 +152,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
-app.post('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   console.log('Login request received');
   const { email, password } = req.body;
 
@@ -220,11 +221,11 @@ router.delete('/users/:id', async (req, res) => {
     res.status(500).json({ error: 'Error deleting user.' });
   }
 });
+app.use('/api', router);
+
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
+module.exports = app;
