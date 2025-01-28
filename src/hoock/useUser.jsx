@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3033';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://olgakruglik.github.io/userList/';
 
 const useFetchUsers = () => {
 const [users, setUsers] = useState([]);

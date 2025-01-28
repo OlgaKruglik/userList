@@ -22,6 +22,7 @@ const allowedOrigins = [
 'http://localhost:3034',
 'ec2-13-60-190-4.eu-north-1.compute.amazonaws.com',
 "https://olgakruglik.github.io",
+"https://user-list-bm8o.vercel.app/"
 ];
 
 
@@ -221,5 +222,9 @@ router.delete('/users/:id', async (req, res) => {
 });
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 
