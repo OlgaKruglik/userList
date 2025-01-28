@@ -79,6 +79,9 @@
 .info-user {
     background: #dbdbdb;
     width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 .info-user.blocked {
     opacity: 0.5;
@@ -95,6 +98,7 @@
 
 .info-user label {
     padding: 0 10px;
+    width: 3%;
     display: flex;
     justify-content: space-between;
     border-radius: 5px;
@@ -113,6 +117,15 @@
     align-items: center;
     justify-content: center;
     
+}
+.toolbar-header-table {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 5px;
+    border: 2px solid rgb(199, 199, 199);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {

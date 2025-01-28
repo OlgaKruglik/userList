@@ -12,9 +12,8 @@ dotenv.config();
 
 const app = express();
 const router = express.Router();
-const PORT = process.env.PORT || 3033; // Изменённый порт
+const PORT = process.env.PORT || 3033; 
 
-// CORS настройки
 console.log("CORS настройки");
 const allowedOrigins = [
 'http://localhost:3000', 
@@ -22,11 +21,10 @@ const allowedOrigins = [
 'http://localhost:3001',
 'http://localhost:3034',
 'ec2-13-60-190-4.eu-north-1.compute.amazonaws.com',
-"https://olgakruglik.github.io", // Обновлённый порт
+"https://olgakruglik.github.io",
 ];
 
-// Middleware
-console.log("Middleware");
+
 app.use(cors({
   origin: (origin, callback) => {
     console.log('Origin:', origin);
@@ -41,7 +39,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// Путь к вашему сертификату
 const caCertPath = path.resolve(__dirname, 'ca.pem');
 
 
@@ -63,23 +60,17 @@ app.use(
 
 app.use(helmet({ contentSecurityPolicy: false }));
 
-// Подключение к базе данных MySQL
-console.log("createConnection к базе данных MySQL");
 const db = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'your_db_user',
-  password: process.env.DB_PASSWORD || 'your_db_password',
-  database: process.env.DB_NAME || 'mydatabase',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   port: process.env.DB_PORT || 3306,
-  ssl: process.env.DB_SSL === 'true' ? {
-    ca: fs.readFileSync(caCertPath, 'utf8'),
-  } : null,
+  ssl: process.env.DB_SSL === 'true' ? { ca: fs.readFileSync(caCertPath, 'utf8') } : null,
 });
 
-console.log("Подключение к базе данных MySQL");
 
-// Настройка CORS заголовков
-console.log("Настройка CORS заголовков");
+
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
@@ -91,78 +82,72 @@ app.use((req, res, next) => {
   next();
 });
 
-// Запуск сервера
-console.log("Запуск сервера");
 app.listen(PORT, () => {
 console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
 
-// Маршруты
 app.get('/users', async (req, res) => {
-const sql = 'SELECT id, name, email, password, last_login, is_blocked FROM users';
-try {
-const [results] = await db.query(sql);
-res.json(results);
-} catch (err) {
-console.error('Error fetching users:', err);
-res.status(500).send('Error fetching users');
-}
+  const sql = 'SELECT id, name, email, password, last_login, is_blocked FROM users';
+  try {
+    const [results] = await db.query(sql);
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).send('Error fetching users');
+  }
 });
 
 app.post('/check-user', async (req, res) => {
-const { email, password } = req.body;
+  const { email, password } = req.body;
 
-if (!email || !password) {
-return res.status(400).json('Email and password are required.');
-}
+  if (!email || !password) {
+    return res.status(400).json('Email and password are required.');
+  }
 
-try {
-const sql = 'SELECT * FROM users WHERE email = ?';
-const [results] = await db.query(sql, [email]);
+  try {
+    const sql = 'SELECT * FROM users WHERE email = ?';
+    const [results] = await db.query(sql, [email]);
 
-if (results.length === 0) {
-return res.status(404).json('User not found.');
-}
+    if (results.length === 0) {
+      return res.status(404).json('User not found.');
+    }
 
-const user = results[0];
-const isPasswordValid = await bcrypt.compare(password, user.password);
+    const user = results[0];
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-if (!isPasswordValid) {
-return res.status(401).json('Invalid email or password.');
-}
+    if (!isPasswordValid) {
+      return res.status(401).json('Invalid email or password.');
+    }
 
-res.status(200).json({ message: 'User exists and password is valid.' });
-} catch (error) {
-console.error('Error checking user:', error);
-res.status(500).json('An error occurred while checking the user.');
-}
+    res.status(200).json({ message: 'User exists and password is valid.' });
+  } catch (error) {
+    console.error('Error checking user:', error);
+    res.status(500).json('An error occurred while checking the user.');
+  }
 });
 
 app.post('/register', async (req, res) => {
-const { name, email, password } = req.body;
+  const { name, email, password } = req.body;
 
-if (!name || !email || !password) {
-return res.status(400).json('All fields are required (name, email, and password).');
-}
+  if (!name || !email || !password) {
+    return res.status(400).json('All fields are required (name, email, and password).');
+  }
 
-try {
-const [existingUsers] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
-if (existingUsers.length > 0) {
-return res.status(400).json('User with this email already exists.');
-}
+  try {
+    const [existingUsers] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
+    if (existingUsers.length > 0) {
+      return res.status(400).json('User with this email already exists.');
+    }
 
-const hashedPassword = await bcrypt.hash(password, 10);
-const sql = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
-await db.query(sql, [name, email, hashedPassword]);
-res.status(201).json({ message: 'User registered successfully' });
-} catch (error) {
-console.error('Error registering user:', error);
-res.status(500).json('An error occurred during registration');
-}
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const sql = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
+    await db.query(sql, [name, email, hashedPassword]);
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json('An error occurred during registration');
+  }
 });
 
 app.post('/login', async (req, res) => {
@@ -234,5 +219,7 @@ router.delete('/users/:id', async (req, res) => {
     res.status(500).json({ error: 'Error deleting user.' });
   }
 });
-
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 

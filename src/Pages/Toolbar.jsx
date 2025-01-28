@@ -145,7 +145,7 @@ export default function Toolbar() {
                     <img src={deleteUser} alt='deleteUser' />
                 </div>
                 <div className='taking-image' onClick={handleBlockSelected}>
-                    <a href="/">Home</a>
+                    <a href="/">Exit</a>
                 </div>
             </div>
             <div className='toolbar-filter'>
@@ -161,19 +161,21 @@ export default function Toolbar() {
         </div>
         <div className='foolbar-users'>
             <div className='info-user table'>
-                <label>
-                    <input
-                        type='checkbox'
-                        checked={isAllSelected}
-                        onChange={(e) => handleSelectAll(e.target.checked)}
-                    />
+                <div className='toolbar-header-table'>
+                    <label>
+                        <input
+                            type='checkbox'
+                            checked={isAllSelected}
+                            onChange={(e) => handleSelectAll(e.target.checked)}
+                        />
+                    </label>
                     <p>Name</p>
                     <p>Email</p>
                     <div className='time-out'>
-                        <img src={arrow} alt='arrow' onClick={handleSort} />
-                        <p>Time</p>
+                            <img src={arrow} alt='arrow' onClick={handleSort} />
+                            <p>Time</p>
                     </div>
-                </label>
+                </div>
             </div>
             {loading && <p>Loading users...</p>}
             {fetchError && <p>Error fetching users: {fetchError}</p>}
@@ -182,7 +184,7 @@ export default function Toolbar() {
                     {sortedUsers.map((user) => (
                         <div
                             key={user.id}
-                            className={`info-user ${blockedUsers.has(user.id) ? 'blocked' : ''}`}
+                            className={`info-user  ${blockedUsers.has(user.id) ? 'blocked' : ''}`}
                         >
                             <label>
                                 <input
@@ -190,7 +192,8 @@ export default function Toolbar() {
                                     checked={selectedUsers.has(user.id)}
                                     onChange={() => handleSelectUser(user.id)}
                                 />
-                                <p>{user.name === 'Default Name'
+                            </label>
+                            <p>{user.name === 'Default Name'
                                 ? ''
                                 : user.name}</p>
                                 <p>{user.email}</p>
@@ -199,7 +202,6 @@ export default function Toolbar() {
                                         ? new Date(user.last_login).toLocaleString()
                                         : '0'}
                                 </p>
-                            </label>
                         </div>
                     ))}
                 </div>

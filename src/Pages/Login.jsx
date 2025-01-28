@@ -37,16 +37,15 @@ function Login() {
             console.log('Response from server:', response.data);
             console.log('Fetched Users:', users);
       
-            // Проверяем блокировку пользователя на основе email
             const foundUser = users.find(user => user.email === email);
             if (foundUser) {
               if (foundUser.is_blocked === 1) {
                 outRezult('Your account is blocked. Redirecting to registration page.');
-                navigate('/registration'); // Перенаправление на страницу регистрации
+                navigate('/registration'); 
                 return;
               }
               outRezult('Login successful! Redirecting...');
-              navigate('/toolbar'); // Перенаправление на главную страницу
+              navigate('/toolbar'); 
             } else {
               outRezult('User not found.');
             }
@@ -66,28 +65,6 @@ function Login() {
       passwordInput.setAttribute('type', type);
     };
 
-
-    const handleLogin = async (event) => {
-        event.preventDefault();
-        if (email && password) {
-            try {
-                console.log('Sending login request...');
-                const response = await axios.post('http://localhost:3033/login', { email, password });
-                console.log('User logged in:', response.data);
-                if (response.status === 200) { 
-                console.log('Navigating to /toolbar');
-                navigate('/toolbar');
-                } else {
-                    console.log('Unexpected response status:', response.status);
-                }
-            } catch (error) {
-                console.error('Error logging in:', error);
-                setError(error.response?.data || 'An error occurred during login.');
-            }
-        } else {
-            outRezult('Please fill in both email and password fields.');
-        }
-    };
 
     return (
         <div className="login-container">
@@ -138,7 +115,7 @@ function Login() {
               <Link to="/registration">Register</Link>
             </div>
             <div className="form-footer-register">
-            <Link to="/registration">Register</Link>
+            <Link to="/registration">Forgot possword</Link>
             </div>
           </div>
         </div>
