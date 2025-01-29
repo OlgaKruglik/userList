@@ -6,30 +6,24 @@ const dotenv = require('dotenv');
 const helmet = require('helmet');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs');
 
 dotenv.config();
 
 const app = express();
 const router = express.Router();
-app.use(express.static(path.join(__dirname, 'build'))); 
+app.use('/api', router);
 
-console.log("CORS настройки");
 const allowedOrigins = [
-'http://localhost:3000', 
-'http://localhost:5001',
-'http://localhost:3001',
-'http://localhost:3034',
-'ec2-13-60-190-4.eu-north-1.compute.amazonaws.com',
-"https://olgakruglik.github.io",
-"https://user-list-bm8o.vercel.app/",
-"https://userslist-5pm7t0b1k-olgakrugliks-projects.vercel.app"
+  'http://localhost:3000',
+  'http://localhost:3035',
+  'https://userslist-5pm7t0b1k-olgakrugliks-projects.vercel.app',
+  'https://olgakruglik.github.io',
+  'https://userslist-phi.vercel.app'
 ];
 
-module.exports = app;
+// Настройка CORS
 app.use(cors({
   origin: (origin, callback) => {
-    console.log('Origin:', origin);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -41,50 +35,30 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-const caCertPath = path.resolve(__dirname, 'ca.pem');
-
-
+// Настройка безопасности
 app.use(bodyParser.json());
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
-        imgSrc: ["'self'", "data:"],
-        scriptSrc: ["'self'"],
-        styleSrc: [
-          "'self'",
-          "'unsafe-inline'", 
-          "https://fonts.googleapis.com",
-        ],
-      },
-    },
-  })
-);
-
 app.use(helmet({ contentSecurityPolicy: false }));
 
+// Подключение к базе данных
 const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT || 3306,
-  ssl: process.env.DB_SSL === 'true' ? { ca: fs.readFileSync(caCertPath, 'utf8') } : null,
+  ssl: process.env.DB_SSL === 'true' ? { ca: process.env.DB_CA_CERT } : null,
 });
 
-
-
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
+// Маршрут получения пользователей
+router.get('/users', async (req, res) => {
+  const sql = 'SELECT id, name, email, password, last_login, is_blocked FROM users';
+  try {
+    const [results] = await db.query(sql);
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).send('Error fetching users');
   }
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  next();
 });
 
 
@@ -222,7 +196,7 @@ router.delete('/users/:id', async (req, res) => {
   }
 });
 app.options('*', cors());
-app.use('/api', router);
+
 
 
 app.get('*', (req, res) => {

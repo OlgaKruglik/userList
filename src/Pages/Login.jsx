@@ -17,7 +17,7 @@ function Login() {
     const [message, setMessage] = useState('');
     const {users, loading, fetchError} = useFetchUsers();
     const navigate = useNavigate();
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://olgakruglik.github.io/userList/';
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const outRezult = (str) => {
         setMessage(str);
@@ -28,36 +28,41 @@ function Login() {
   
     
     const handleSubmit = async (event) => {
-        event.preventDefault();
+      event.preventDefault();
       
-        if (email && password) {
-          try {
-            console.log('Sending check-user request...');
-            const response = await axios.post(`${API_BASE_URL}/check-user`, { email, password, rememberMe });
-      
-            console.log('Response from server:', response.data);
-            console.log('Fetched Users:', users);
-      
-            const foundUser = users.find(user => user.email === email);
-            if (foundUser) {
-              if (foundUser.is_blocked === 1) {
-                outRezult('Your account is blocked. Redirecting to registration page.');
-                navigate('/registration'); 
-                return;
-              }
-              outRezult('Login successful! Redirecting...');
-              navigate('/toolbar'); 
-            } else {
-              outRezult('User not found.');
+      if (email && password) {
+        try {
+          console.log('Sending check-user request...');
+          const response = await axios.post(
+            `${API_BASE_URL}/check-user`, 
+            { email, password, rememberMe },
+            { withCredentials: true } 
+          );
+    
+          console.log('Response from server:', response.data);
+          console.log('Fetched Users:', users);
+    
+          const foundUser = users.find(user => user.email === email);
+          if (foundUser) {
+            if (foundUser.is_blocked === 1) {
+              outRezult('Your account is blocked. Redirecting to registration page.');
+              navigate('/registration'); 
+              return;
             }
-          } catch (error) {
-            console.error('Error checking user:', error);
-            setError(error.response?.data || 'An error occurred during check-user.');
+            outRezult('Login successful! Redirecting...');
+            navigate('/toolbar'); 
+          } else {
+            outRezult('User not found.');
           }
-        } else {
-          alert('Please fill in both email and password fields.');
+        } catch (error) {
+          console.error('Error checking user:', error);
+          setError(error.response?.data || 'An error occurred during check-user.');
         }
-      };
+      } else {
+        alert('Please fill in both email and password fields.');
+      }
+    };
+    
       
   
     const togglePassword = () => {
@@ -107,7 +112,7 @@ function Login() {
                 />
                 <label htmlFor="rememberMe" className="form-check-label">Remember Me</label>
               </div>
-              <button type="submit" className="btn-submit">Register</button>
+              <button type="submit" className="btn-submit">Sing in</button>
             </form>
           </div>
           <div className="form-footer">
