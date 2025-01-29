@@ -21,20 +21,65 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: white;
-    border-radius: 5px;
-    border: 2px solid rgb(160, 160, 255);;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #6a85b6, #bac8e0);
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border: none;
+    min-width: 80px;
 }
+
+.taking-image:hover {
+    background: linear-gradient(135deg, #5a75a6, #a0b0d0);
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
 .taking-image img{
-    height: 1.5rem;
-    width: 1.5rem;
+    height: 2rem;
+    width: 2rem;
+    transition: transform 0.3s ease-in-out;
+}
+
+.taking-image:hover img {
+    transform: rotate(10deg) scale(1.1);
 }
 
 .taking-image p {
-    color: rgb(160, 160, 255);
-    padding: 0 5px;
+    color: white;
+    font-weight: bold;
+    padding-left: 8px;
+    font-size: 1rem;
 }
+
+.taking-image a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.header-image {
+    background: linear-gradient(135deg, #ff6a6a, #ffb6b6);
+}
+
+.header-image:hover {
+    background: linear-gradient(135deg, #e85a5a, #f0a6a6);
+}
+
+.taking-image.exit {
+    background: linear-gradient(135deg, #5aa65a, #a0d0a0);
+}
+
+.taking-image.exit:hover {
+    background: linear-gradient(135deg, #4a954a, #90c090);
+}
+
 .header-image img {
     padding: 12px;
 }
@@ -135,5 +180,8 @@
     .toolbar-header {
         flex-direction: column;
         gap: 2rem;
+    }
+    .taking-actions {
+        flex-wrap: wrap;
     }
   }
