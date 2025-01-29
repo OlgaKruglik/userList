@@ -13,20 +13,26 @@ const app = express();
 const router = express.Router();
 app.use('/api', router);
 
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:3035',
-  'https://userslist-5pm7t0b1k-olgakrugliks-projects.vercel.app',
-  'https://olgakruglik.github.io',
-  'https://userslist-phi.vercel.app'
-];
-
-// Настройка CORS
 app.use(cors({
-  origin: '*',
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3035',
+    'https://userslist-5pm7t0b1k-olgakrugliks-projects.vercel.app',
+    'https://olgakruglik.github.io',
+    'https://userslist-phi.vercel.app'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 // Настройка безопасности
 app.use(bodyParser.json());

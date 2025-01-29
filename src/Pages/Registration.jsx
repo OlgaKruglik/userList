@@ -26,7 +26,7 @@ function Registration() {
       event.preventDefault();
       if (email && password && name) {
           try {
-              const response = await axios.post(`${API_BASE_URL}/register`, { name, email, password, rememberMe });
+              const response = await axios.post(`${API_BASE_URL}/register`, { name, email, password, rememberMe }, { withCredentials: true });
               console.log('User registered:', response.data.message);
               outRezult('Registration successful!');
               setName('');

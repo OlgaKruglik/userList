@@ -5,6 +5,7 @@ import unblok from './image/unblok.png'
 import deleteUser from './image/delete.png'
 import useFetchUsers from '../hoock/useUser';
 import useFilterUsers from '../hoock/useFilter';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import  arrow  from './image/round.png';
 import { Link } from 'react-router-dom';
@@ -16,6 +17,7 @@ export default function Toolbar() {
     const [blockedUsers, setBlockedUsers] = useState(new Set());
     const [selectedUsers, setSelectedUsers] = useState(new Set());
     const [blockedUsersList, setBlockedUsersList] = useState([]);
+    const navigate = useNavigate();
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3033';
 
     const handleSort = () => {
@@ -48,6 +50,7 @@ export default function Toolbar() {
             if (response.ok) {
                 console.log(`User with ID ${userId} deleted successfully.`);
                 window.location.reload();
+                navigate('/toolbar');
             } else {
                 console.error('Failed to delete user.');
             }
