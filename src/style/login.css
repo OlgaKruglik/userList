@@ -8,12 +8,21 @@
 }
 .btnLogin {
     display: flex;
+    gap: 5px;
 }
-.right {
-    background: #169031;
+
+.btn-submit-right {
+  background: #169031;;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
 }
-.right:hover {
-    background: #2c6e3b;
+.btn-submit-right:hover {
+  background: #2c6e3b;
 }
 
 .login-card-page {

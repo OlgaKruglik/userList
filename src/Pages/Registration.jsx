@@ -12,7 +12,7 @@ function Registration() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
-  const API_BASE_URL = "https://userslist-5pm7t0b1k-olgakrugliks-projects.vercel.app"
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 
   const outRezult = (str) => {
@@ -70,7 +70,7 @@ function Registration() {
     <div className="login">
     {message && <div className="text-rezult"><p>{message}</p></div>}
     <div className="login-card-page">
-        <h2 className="login-header">Login</h2>
+        <h2 className="login-header">Registration</h2>
         {error && <p className="error-message">{error}</p>}
         <form>
             <div className="form-group">
@@ -107,7 +107,7 @@ function Registration() {
                 <button onClick={handleLogin} className="btn-submit">
                     Sign in
                 </button>
-                <button onClick={handleRegister} className="btn-submit right">
+                <button onClick={handleRegister} className="btn-submit-right">
                     Registration
                 </button>
             </div>

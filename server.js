@@ -23,15 +23,8 @@ const allowedOrigins = [
 
 // Настройка CORS
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
@@ -204,3 +197,11 @@ app.get('*', (req, res) => {
 });
 
 module.exports = app;
+
+
+
+
+
+
+
+
