@@ -50,7 +50,7 @@ export default function Toolbar() {
             if (response.ok) {
                 console.log(`User with ID ${userId} deleted successfully.`);
                 window.location.reload();
-                navigate('/toolbar');
+                navigate('/userList');
             } else {
                 console.error('Failed to delete user.');
             }
