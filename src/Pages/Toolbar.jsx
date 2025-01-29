@@ -49,8 +49,7 @@ export default function Toolbar() {
             });
             if (response.ok) {
                 console.log(`User with ID ${userId} deleted successfully.`);
-                window.location.reload();
-                navigate('/userList');
+                refetchUsers(); 
             } else {
                 console.error('Failed to delete user.');
             }
@@ -58,6 +57,7 @@ export default function Toolbar() {
             console.error('Error deleting user:', error);
         }
     };
+    
 
     const handleBlockSelected = async () => {
         try {
